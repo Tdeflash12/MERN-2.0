@@ -21,6 +21,9 @@ const Schema= mongoose.Schema
     },
     publication:{
         type:String
+    },
+    imageUrl:{
+        type:String
     }
  })
 

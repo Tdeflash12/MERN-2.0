@@ -1,6 +1,6 @@
 const express = require("express")
 const app = express()
-
+const fs = require('fs')
 const connectTODatabase =require("./database");
 const Book = require("./model/bookModel");
 // multerconfig imports here
@@ -19,16 +19,28 @@ app.get("./",(req , res)=>{
         message: "success"
     })
 }) 
+// Create Book
 app.post("/book",upload.single("image"),async(req,res)=>{
+    console.log(req.file)
+    let fileName ;
+        if(!req.file){
+            fileName="https://www.shutterstock.com/image-vector/default-avatar-profile-icon-social-600nw-1677509740.jpg"
+        }
+        else{
+            fileName="http://localhost:3000/" + req.file.filename
+        }
+    
 
-    const {bookName,bookPrice,isoNumber,authorName,publishedAt,publication} =req.body
+
+    const {bookName,bookPrice,isoNumber,authorName,publishedAt,publication,imageUrl} =req.body
  await Book.create({
     bookName,
     bookPrice,
     isoNumber,
     authorName,
     publishedAt,
-    publication
+    publication,
+    imageUrl : fileName
 })
 res.status(201).json({
     message: "Book Created Successfully"
@@ -69,9 +81,26 @@ app.delete("/book/:id",async(req,res)=>{
 })
 
 // update  operation
-app.patch("/book/:id",async(req,res)=>{
+app.patch("/book/:id",upload.single("image"),async(req,res)=>{
     const id =req.params.id // kun book update grney id yo ho
     const {bookName,bookPrice,isoNumber,authorName,publishedAt,publication,isbrNumber} =req.body
+  const oldDatas =  await Book.findById(id)
+    if (req.file){
+        console.log(req.file)
+        console.log(oldDatas)
+        const oldImagePath =oldDatas.imageUrl
+        console.log(oldImagePath)
+        const localHostUrlLength= "http://localhost:3000/".length
+        const newImageOldPath = oldImagePath.slice(localHostUrlLength)
+   fs.unlink("/storage/hi.txt",(err)=>{
+    if(err){
+        conssole.log(err)
+    }else{
+        console.log("file Deleted Successfully")
+    }
+   })
+    }
+  
     await Book.findByIdAndUpdate(id,{
         bookName: bookName,
         bookPrice: bookPrice,
@@ -85,6 +114,7 @@ app.patch("/book/:id",async(req,res)=>{
         message: "Book updated Successfully"
     })
 })
+app.use(express.static("./storage"))
 
 app.listen(3000,()=>{
     console.log("Node js server Started at the Port 3000");
