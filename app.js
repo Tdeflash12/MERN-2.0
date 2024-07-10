@@ -9,6 +9,12 @@ const {multer,storage }= require("./middleware/multerConfig")
 const upload = multer({storage: storage})
 //Alternative
 // const app = require("express")[]
+//cors package
+const cors = require('cors')
+
+app.use(cors({
+    origin:"*"
+}))
 app.use(express.json())
 
 connectTODatabase()
@@ -32,11 +38,12 @@ app.post("/book",upload.single("image"),async(req,res)=>{
     
 
 
-    const {bookName,bookPrice,isoNumber,authorName,publishedAt,publication,imageUrl} =req.body
+    const {bookName,bookPrice,isoNumber,isbrNumber,authorName,publishedAt,publication,imageUrl} =req.body
  await Book.create({
     bookName,
     bookPrice,
     isoNumber,
+    isbrNumber,
     authorName,
     publishedAt,
     publication,
