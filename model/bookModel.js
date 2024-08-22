@@ -10,7 +10,7 @@ const Schema= mongoose.Schema
     bookPrice :{
         type:Number
     }, 
-    isbrNUmber :{
+    isbrNumber :{
         type: Number
     },
     authorName :{
@@ -20,6 +20,9 @@ const Schema= mongoose.Schema
         type:String
     },
     publication:{
+        type:String
+    },
+    imageUrl:{
         type:String
     }
  })
